@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     var itemBehaviour: UIDynamicItemBehavior!
     
     // For getting device motion updates
-    let motionQueue = NSOperationQueue()
+    let motionQueue = OperationQueue()
     let motionManager = CMMotionManager()
     
     override func viewDidLoad() {
@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         let square = UIView(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
-        square.backgroundColor = UIColor.grayColor()
+        square.backgroundColor = UIColor.gray
         view.addSubview(square)
         
         animator = UIDynamicAnimator(referenceView: view)
@@ -46,13 +46,49 @@ class ViewController: UIViewController {
         box = square
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NSLog("Starting gravity")
-        motionManager.startDeviceMotionUpdatesToQueue(motionQueue, withHandler: gravityUpdated)
+        motionManager.startDeviceMotionUpdates(to: motionQueue) { (motion, error) in
+            DispatchQueue.main.async {
+                self.detectCollisions()
+            }
+            let grav: CMAcceleration = motion!.gravity
+            
+            let x = CGFloat(grav.x)
+            let y = CGFloat(grav.y)
+            var p = CGPoint(x: x, y: y)
+            
+            if let error = error {
+                print("got error: \(error.localizedDescription)")
+            }
+            
+            // Have to correct for orientation.
+            DispatchQueue.main.async {
+                let orientation = UIApplication.shared.statusBarOrientation
+                
+                if(orientation == UIInterfaceOrientation.landscapeLeft) {
+                    let t = p.x
+                    p.x = 0 - p.y
+                    p.y = t
+                } else if (orientation == UIInterfaceOrientation.landscapeRight) {
+                    let t = p.x
+                    p.x = p.y
+                    p.y = 0 - t
+                } else if (orientation == UIInterfaceOrientation.portraitUpsideDown) {
+                    p.x *= -1
+                    p.y *= -1
+                }
+                
+                let v = CGVector(dx: p.x, dy: 0 - p.y)
+                self.gravity.gravityDirection = v
+            }
+            
+        }
+
     }
     
-    override func viewDidDisappear(animated: Bool)  {
+    override func viewDidDisappear(_ animated: Bool)  {
         super.viewDidDisappear(animated)
         NSLog("Stopping gravity")
         motionManager.stopDeviceMotionUpdates()
@@ -64,44 +100,16 @@ class ViewController: UIViewController {
     }
     
     //----------------- Core Motion
-    func gravityUpdated(motion: CMDeviceMotion!, error: NSError!) {
-        detectCollisions()
-        let grav : CMAcceleration = motion.gravity;
+    func gravityUpdated(motion: CMDeviceMotion?, error: NSError?) {
         
-        let x = CGFloat(grav.x);
-        let y = CGFloat(grav.y);
-        var p = CGPointMake(x,y)
-        
-        if (error != nil) {
-            NSLog("\(error)")
-        }
-        
-        // Have to correct for orientation.
-        var orientation = UIApplication.sharedApplication().statusBarOrientation;
-        
-        if(orientation == UIInterfaceOrientation.LandscapeLeft) {
-            var t = p.x
-            p.x = 0 - p.y
-            p.y = t
-        } else if (orientation == UIInterfaceOrientation.LandscapeRight) {
-            var t = p.x
-            p.x = p.y
-            p.y = 0 - t
-        } else if (orientation == UIInterfaceOrientation.PortraitUpsideDown) {
-            p.x *= -1
-            p.y *= -1
-        }
-        
-        var v = CGVectorMake(p.x, 0 - p.y);
-        gravity.gravityDirection = v;
     }
     
     func detectCollisions() {
 // TODO: more robust
         var maxX = 0.0 as CGFloat
         var maxY = 0.0 as CGFloat
-        var boxBottom = CGPointMake(0.0, 0.0)
-        var padding = 0.0 as CGFloat
+        var boxBottom = CGPoint(x: 0.0, y: 0.0)
+        let padding = 0.0 as CGFloat
         
         if let window = view as UIView? {
             maxX = window.frame.size.width
@@ -109,17 +117,19 @@ class ViewController: UIViewController {
         }
         
         if let square = box {
-            boxBottom = CGPointMake(square.frame.origin.x + square.frame.size.width, square.frame.origin.y + square.frame.size.height)
+            DispatchQueue.main.async {
+                boxBottom = CGPoint(x: square.frame.origin.x + square.frame.size.width, y: square.frame.origin.y + square.frame.size.height)
+            }
         }
         
         if (box?.frame.origin.x == (0.0 + padding)) {       //box at the left
-            box?.backgroundColor = UIColor.redColor()
+            box?.backgroundColor = UIColor.red
         } else if (box?.frame.origin.y == (0.0 + padding)) {        //box at the top
-            box?.backgroundColor = UIColor.greenColor()
+            box?.backgroundColor = UIColor.green
         } else if (boxBottom.x == (maxX - padding)) {       //box at the right
-            box?.backgroundColor = UIColor.yellowColor()
+            box?.backgroundColor = UIColor.yellow
         } else if (boxBottom.y == (maxY - padding)) {
-            box?.backgroundColor = UIColor.cyanColor()
+            box?.backgroundColor = UIColor.cyan
         }
     }
 

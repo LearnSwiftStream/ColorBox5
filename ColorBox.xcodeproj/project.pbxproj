@@ -161,6 +161,8 @@
 				TargetAttributes = {
 					6E37BFB519F5547000A1047D = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = 3Z4ZDG98FM;
+						ProvisioningStyle = Automatic;
 					};
 					6E37BFCA19F5547000A1047D = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -173,6 +175,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -336,9 +339,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3Z4ZDG98FM;
 				INFOPLIST_FILE = ColorBox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = mattdias.ColorBox5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -346,9 +355,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3Z4ZDG98FM;
 				INFOPLIST_FILE = ColorBox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = mattdias.ColorBox5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -405,6 +420,7 @@
 				6E37BFD719F5547000A1047D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6E37BFD819F5547000A1047D /* Build configuration list for PBXNativeTarget "ColorBoxTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +429,7 @@
 				6E37BFDA19F5547000A1047D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
